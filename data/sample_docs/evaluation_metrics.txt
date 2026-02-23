@@ -1,0 +1,19 @@
+Evaluation Metrics for RAG Systems: Measuring Retrieval and Generation Quality
+
+Evaluating the quality of a RAG system requires measuring both the retrieval component and the generation component independently, as well as the end-to-end system performance. Without rigorous evaluation, it is impossible to know whether changes to the system actually improve output quality or introduce regressions.
+
+Precision at k measures the proportion of retrieved documents in the top k results that are actually relevant to the query. If a system retrieves 5 documents and 3 are relevant, the precision at 5 is 0.6. This metric tells you how much noise exists in the retrieval results. A low precision means the model is being given irrelevant context, which can confuse the generation step and lead to lower quality responses.
+
+Recall at k measures the proportion of all relevant documents in the knowledge base that appear in the top k retrieval results. If there are 10 relevant documents for a query and the system retrieves 4 of them in the top 5, the recall at 5 is 0.4. High recall is critical for ensuring that the model has access to the information it needs to generate a complete and accurate answer.
+
+The F1 score is the harmonic mean of precision and recall, providing a single metric that balances both concerns. It is particularly useful when comparing different retrieval configurations, as it penalises systems that achieve high precision at the expense of recall or vice versa.
+
+Mean Reciprocal Rank evaluates how quickly the system returns the first relevant result. It is the average of the reciprocal of the rank at which the first relevant document appears. An MRR of 1.0 means the most relevant document is always the first result, while a lower MRR indicates that users or downstream systems must look further down the ranked list to find relevant information.
+
+Faithfulness measures whether the generated response is grounded in the retrieved context. A response is considered faithful if every factual claim it makes can be traced back to the provided documents. This is a critical metric for detecting hallucination. Faithfulness is typically evaluated using an LLM-as-judge approach, where a separate model assesses each claim in the response against the source documents.
+
+Answer relevancy measures whether the generated response actually addresses the user's question. A response can be faithful to the context but still fail to answer the question if the retrieved documents are not relevant. This metric captures the end-to-end quality of the system by evaluating the final output against the original intent.
+
+Context precision measures the proportion of the retrieved context that is relevant to generating the answer. High context precision means the retrieval system is providing focused, relevant information. Low context precision means the model is receiving too much irrelevant information, which can dilute the quality of the response and waste tokens.
+
+In production evaluation frameworks, these metrics are computed across a standardised test suite using a Design of Experiments methodology. Test suites are constructed with controlled variables to ensure statistical validity. Confidence intervals are calculated for each metric to determine whether observed differences between system configurations are statistically significant. Automated evaluation gating uses these metrics to block deployments that regress below established quality thresholds.

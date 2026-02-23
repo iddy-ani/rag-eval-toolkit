@@ -1,0 +1,17 @@
+Text Chunking Strategies for Retrieval-Augmented Generation
+
+Chunking is the process of breaking large documents into smaller, manageable pieces that can be individually embedded and retrieved. The chunking strategy directly impacts retrieval quality, as poorly chunked documents can split critical information across multiple chunks, reduce embedding quality by mixing unrelated content within a single chunk, or create chunks that are too short to carry meaningful context.
+
+The simplest approach is fixed-size character chunking, where documents are split into chunks of a predetermined character count, such as 500 or 1000 characters. This approach is easy to implement but has significant drawbacks. It splits text at arbitrary positions, often in the middle of sentences or even words, breaking the natural flow of information and creating chunks with incomplete thoughts.
+
+Sentence-based chunking improves on fixed-size splitting by respecting sentence boundaries. Documents are split into individual sentences, which are then grouped into chunks that fit within a maximum size. This preserves the natural unit of information, as each sentence typically expresses a complete thought. Adding overlap between chunks, where the last few sentences of one chunk are repeated at the beginning of the next, helps maintain context across chunk boundaries.
+
+Paragraph-based chunking takes the document's existing structure into account by splitting on paragraph breaks. Since paragraphs typically discuss a single topic or idea, this approach tends to create semantically coherent chunks. However, paragraph lengths vary widely, so some paragraphs may need to be further split while very short paragraphs may need to be combined.
+
+Semantic chunking uses embeddings to determine where to split text. Consecutive sentences are compared using embedding similarity, and splits are introduced where the similarity drops significantly, indicating a topic change. This approach creates chunks that are semantically coherent regardless of the document's formatting, but it requires computing embeddings during the chunking process, making it more computationally expensive.
+
+Recursive chunking attempts to split text at the most meaningful boundaries first, falling back to less meaningful boundaries as needed. For example, it might first try to split by headings, then by paragraphs, then by sentences, and finally by character count. This hierarchical approach adapts to the document's structure and tends to produce high-quality chunks across different document types.
+
+Code-aware chunking handles source code files differently from natural language text. Instead of splitting by sentences or paragraphs, code is split by logical units such as functions, classes, or code blocks. This ensures that complete logical units remain together in a single chunk, preserving the context needed to understand the code.
+
+In production environments serving diverse document types, multiple chunking strategies are often necessary. Legal documents with numbered sections benefit from section-based splitting, technical documentation with code examples needs code-aware chunking, and general knowledge base articles work well with semantic or recursive chunking. A robust RAG system allows different strategies to be configured per document type or even per knowledge base.
